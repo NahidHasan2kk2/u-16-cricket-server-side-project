@@ -8,7 +8,7 @@ const dotenv = require('dotenv')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 dotenv.config();
 const app = express()
-const port = process.env.PORT || 5001;
+const port = process.env.PORT
 
 const uri = process.env.MONGODB_URL
 
@@ -48,7 +48,11 @@ async function run() {
    res.send(result)
   })
 
-
+  app.get('/all-facilities', async (req, res) => {
+   // const body = req.body;
+   const result = await facilitiesCollection.find().toArray();
+   res.send(result)
+  })
 
 
   // Send a ping to confirm a successful connection
