@@ -32,6 +32,7 @@ app.get('/', (req, res) => {
 })
 
 
+
 async function run() {
  try {
   // Connect the client to the server	(optional starting in v4.7)
@@ -51,6 +52,33 @@ async function run() {
   app.get('/all-facilities', async (req, res) => {
    // const body = req.body;
    const result = await facilitiesCollection.find().toArray();
+   res.send(result)
+  })
+  app.get('/all-facilities/:id', async (req, res) => {
+   const id = req.params.id;
+   const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) })
+   res.send(result)
+  })
+
+  app.patch('/all-facilities/:id', async (req, res) => {
+   const id = req.params.id;
+   const body = req.body;
+   const filter = {
+    _id: new ObjectId(id)
+   };
+   const updateDoc = {
+    $set: body
+   }
+   const result = await facilitiesCollection.updateOne(
+    filter, updateDoc
+   )
+   res.json(result)
+  })
+
+  app.delete('/all-facilities/:id', async (req, res) => {
+   const id = req.params.id;
+
+   const result = await facilitiesCollection.deleteOne({ _id: new ObjectId(id) });
    res.send(result)
   })
 
