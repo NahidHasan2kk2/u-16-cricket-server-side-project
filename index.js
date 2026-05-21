@@ -73,7 +73,7 @@ async function run() {
   const facilitiesCollection = db.collection("facilities");
   const bookingCollection = db.collection('bookings');
 
-  app.post('/add-facilities', async (req, res) => {
+  app.post('/add-facilities', verifyToken, async (req, res) => {
    const facility = req.body
    console.log(facility)
    const result = await facilitiesCollection.insertOne(facility);
@@ -85,7 +85,7 @@ async function run() {
    const result = await bookingCollection.insertOne(booking);
    res.json(result)
   })
-  app.get('/my-booking', async (req, res) => {
+  app.get('/my-booking', verifyToken, async (req, res) => {
    // const body = req.body;
    const result = await bookingCollection.find().toArray();
    res.json(result)
@@ -109,7 +109,7 @@ async function run() {
    res.send(result)
   })
 
-  app.patch('/all-facilities/:id', async (req, res) => {
+  app.patch('/all-facilities/:id', verifyToken, async (req, res) => {
    const id = req.params.id;
    const body = req.body;
    const filter = {
@@ -124,7 +124,7 @@ async function run() {
    res.json(result)
   })
 
-  app.delete('/all-facilities/:id', async (req, res) => {
+  app.delete('/all-facilities/:id', verifyToken, async (req, res) => {
    const id = req.params.id;
 
    const result = await facilitiesCollection.deleteOne({ _id: new ObjectId(id) });
