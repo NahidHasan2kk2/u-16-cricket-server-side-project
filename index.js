@@ -41,11 +41,17 @@ async function run() {
 
   const db = client.db("crickets");
   const facilitiesCollection = db.collection("facilities");
+  const bookingCollection = db.collection('bookings');
 
   app.post('/add-facilities', async (req, res) => {
    const facility = req.body
    console.log(facility)
    const result = await facilitiesCollection.insertOne(facility);
+   res.send(result)
+  })
+  app.post('/my-booking', async (req, res) => {
+   const booking = req.body
+   const result = await bookingCollection.insertOne(booking);
    res.send(result)
   })
 
