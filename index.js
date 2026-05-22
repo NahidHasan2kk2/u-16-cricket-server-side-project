@@ -8,17 +8,22 @@ const dotenv = require('dotenv')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 dotenv.config();
+
+
 const app = express()
 const port = process.env.PORT
+
 
 const uri = process.env.MONGODB_URL
 
 app.use(express.json());
 app.use(cors());
 
+
 const JWKS = createRemoteJWKSet(
  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
 )
+
 const verifyToken = async (req, res, next) => {
  const authHeader = req?.headers.authorization;
 
@@ -33,15 +38,13 @@ const verifyToken = async (req, res, next) => {
 
  try {
   const { payload } = await jwtVerify(token, JWKS);
-  console.log(payload);
+  // console.log(payload);
   req.user = payload;
   next()
  }
  catch {
   res.status(403).json({ message: "Forbidden" })
  }
-
-
 
 
 }
@@ -56,9 +59,8 @@ const client = new MongoClient(uri, {
 });
 
 
-
 app.get('/', (req, res) => {
- res.send('Hello World! Nahid')
+ res.send('Hello World! Nahid hasan')
 })
 
 
@@ -73,41 +75,53 @@ async function run() {
   const facilitiesCollection = db.collection("facilities");
   const bookingCollection = db.collection('bookings');
 
+
   app.post('/add-facilities', verifyToken, async (req, res) => {
    const facility = req.body
    console.log(facility)
    const result = await facilitiesCollection.insertOne(facility);
-   res.send(result)
+   res.json(result)
   })
+
 
   app.post('/my-booking', async (req, res) => {
    const booking = req.body
    const result = await bookingCollection.insertOne(booking);
    res.json(result)
   })
+
+
   app.get('/my-booking', verifyToken, async (req, res) => {
    // const body = req.body;
    const result = await bookingCollection.find().toArray();
    res.json(result)
   })
 
+
+
   app.delete('/my-booking/:id', async (req, res) => {
    const id = req.params.id;
 
    const result = await bookingCollection.deleteOne({ _id: new ObjectId(id) });
-   res.send(result)
+   res.json(result)
   })
+
+
 
   app.get('/all-facilities', async (req, res) => {
    // const body = req.body;
    const result = await facilitiesCollection.find().toArray();
-   res.send(result)
+   res.json(result)
   })
+
+
   app.get('/all-facilities/:id', verifyToken, async (req, res) => {
    const id = req.params.id;
    const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) })
-   res.send(result)
+   res.json(result)
   })
+
+
 
   app.patch('/all-facilities/:id', verifyToken, async (req, res) => {
    const id = req.params.id;
@@ -124,11 +138,13 @@ async function run() {
    res.json(result)
   })
 
+
+
   app.delete('/all-facilities/:id', verifyToken, async (req, res) => {
    const id = req.params.id;
 
    const result = await facilitiesCollection.deleteOne({ _id: new ObjectId(id) });
-   res.send(result)
+   res.json(result)
   })
 
 
